@@ -1,0 +1,60 @@
+function [k,xbar,fbar,d]=interpolacion_cuadratica(fun,x1,x3,tol,iter)
+x0bar = 1e99;
+#  primera iteración
+x2 = 0.5*(x1 + x3);
+f1 =fun(x1);
+f2 = fun(x2);
+f3 = fun(x3);
+z1 = (x2 - x3)*f1;
+z2 = (x3 - x1)*f2;
+z3 = (x1 - x2)*f3;
+z4 = (x2 + x3)*z1+(x3 + x1)*z2+(x1 + x2)*z3;
+xbar = z4/(2*(z1 + z2 + z3));
+fbar = fun(xbar);
+d = abs(x0bar - xbar);
+
+#búsqueda de interpolación cuadrática
+for k=0:iter 
+  if x1 < xbar && xbar < x2
+    if fbar <= f2
+      x3 = x2;
+      f3 = f2;
+      x2 = xbar;
+      f2 = fbar;
+      
+    else
+      x1 = xbar;
+      f1 = fbar;
+    end
+    
+  else
+
+    if ((x2 < xbar) && (xbar < x3))
+       if (fbar <= f2)
+        x1 = x2;
+        f1 = f2;
+        x2 = xbar;
+        f2 = fbar;
+       else
+        x3 = xbar;
+        f3 = fbar;
+       end
+     end
+  end 
+  x0bar=xbar;
+  z1 = (x2 - x3)*f1;
+  z2 = (x3 - x1)*f2;
+  z3 = (x1 - x2)*f3;
+  z4 = (x2 + x3)*z1 + (x3 + x1)*z2 + (x1 + x2)*z3;
+  xbar = z4/(2*(z1 + z2 + z3));
+  fbar = fun(xbar);
+  d = abs(x0bar - xbar);
+
+  if(d <tol)
+    break
+  end 
+  
+  xm=xbar;
+  fxm=fun(xbar);
+  
+end
